@@ -11,7 +11,7 @@ class AuthenticationException(Exception): pass
 if os.name == 'nt':
 	drgc = CDLL("dragoncrypt.dll")
 else:
-	drgc = CDLL(os.path.join(os.getcwd(), 'dragoncrypt.a'))
+	drgc = CDLL(os.path.join(os.getcwd(), 'dragoncrypt.so'))
 KEY_SIZE = c_int.in_dll(drgc, 'dragoncryptKeySize').value
 def encrypt(input: bytes, key: int, iv_size: int) -> bytes:
 	'''
