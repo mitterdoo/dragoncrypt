@@ -1,0 +1,8 @@
+*.dll
+*.so
+*.o
+*.exe
+input
+output
+final
+.vscode
