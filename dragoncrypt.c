@@ -63,13 +63,14 @@ const int dragoncryptKeySize = sizeof(keyType);
 
 */
 
-void fencrypt(FILE* input, FILE* output, const keyType* key)
+void fencrypt(FILE* input, FILE* output, const keyType* key, unsigned long size)
 {
 	head(*key); // Init variables
 	// thisByte/outByte are both used when dealing with file encryption/decryption
 	int thisByte;
 	char outByte;
-	while ((thisByte = fgetc(input)) != EOF) // Run through each byte
+	unsigned long i = 0;
+	while (i++ < size-sizeof(keyType) && (thisByte = fgetc(input)) != EOF) // Run through each byte
 	{
 		encrypt(thisByte, outByte, hmac);
 		fputc(outByte, output); // Places the encrypted text into the output

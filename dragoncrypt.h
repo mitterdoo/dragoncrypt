@@ -23,7 +23,7 @@ extern const int dragoncryptKeySize; // size of keyType in bytes. defined in sou
  * A HMAC is appended to the end, with size = sizeof(keyType)
  * It is strongly encouraged to use a truly-random string of bytes at the beginning as an initialization vector. More bytes = stronger security
  */
-extern void fencrypt(FILE* input, FILE* output, const keyType* key);
+extern void fencrypt(FILE* input, FILE* output, const keyType* key, unsigned long size);
 
 /* Decrypt `input` file stream using `key` as the key, where `size` is the length of the encrypted message (with HMAC), outputting to `output` file stream.
  * Returns 1 if the message is valid
