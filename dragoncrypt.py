@@ -27,7 +27,7 @@ def encrypt(input: bytes, key: int, iv_size: int) -> bytes:
 	output = bytes(size + KEY_SIZE + iv_size)
 	output_p = c_char_p(output)
 
-	drgc.sencrypt(input_p, output_p, byref(c_ulonglong(key)), size, iv_ptr, iv_size)
+	drgc.sencrypt(input_p, output_p, c_ulonglong(key), size, iv_ptr, iv_size)
 	return output
 	
 def decrypt(input: bytes, key: int, iv_size: int):
@@ -40,10 +40,10 @@ def decrypt(input: bytes, key: int, iv_size: int):
 	size = len(input)
 	input_p = c_char_p(input)
 
-	output = bytes(max(0,size - KEY_SIZE))
+	output = bytes(max(0,size - KEY_SIZE - iv_size))
 	output_p = c_char_p(output)
 
-	ret = drgc.sdecrypt(input_p, output_p, byref(c_ulonglong(key)), size, iv_size)
+	ret = drgc.sdecrypt(input_p, output_p, c_ulonglong(key), size, iv_size)
 	if ret == 0:
 		raise AuthenticationException()
-	return output[iv_size:]
+	return output
