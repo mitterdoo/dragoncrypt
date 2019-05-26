@@ -18,14 +18,16 @@ def encrypt(input: bytes, key: int, iv_size: int) -> bytes:
 	Encrypts the byte array `input` with the provided `key`, prepending the message with an initialization vector with `iv_size` random bytes.
 	`iv_size` must be the same when decrypting, to read back the data properly.
 	'''
-	input = token_bytes(iv_size) + input
 	size = len(input)
 	input_p = c_char_p(input)
 
-	output = bytes(size + KEY_SIZE)
+	iv = token_bytes(iv_size)
+	iv_ptr = c_char_p(iv)
+
+	output = bytes(size + KEY_SIZE + iv_size)
 	output_p = c_char_p(output)
 
-	drgc.sencrypt(input_p, output_p, byref(c_ulonglong(key)), size)
+	drgc.sencrypt(input_p, output_p, byref(c_ulonglong(key)), size, iv_ptr, iv_size)
 	return output
 	
 def decrypt(input: bytes, key: int, iv_size: int):
@@ -41,7 +43,7 @@ def decrypt(input: bytes, key: int, iv_size: int):
 	output = bytes(max(0,size - KEY_SIZE))
 	output_p = c_char_p(output)
 
-	ret = drgc.sdecrypt(input_p, output_p, byref(c_ulonglong(key)), size)
+	ret = drgc.sdecrypt(input_p, output_p, byref(c_ulonglong(key)), size, iv_size)
 	if ret == 0:
 		raise AuthenticationException()
 	return output[iv_size:]
