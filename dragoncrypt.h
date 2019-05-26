@@ -23,22 +23,22 @@ extern const int dragoncryptKeySize; // size of keyType in bytes. defined in sou
  * A HMAC is appended to the end, with size = sizeof(keyType)
  * It is strongly encouraged to use an initialization vector of truly-random bytes, which will be prepended to the encrypted message.
  */
-extern void fencrypt(FILE* input, FILE* output, const keyType* key, unsigned long size, const char* IV, unsigned long IVsize);
+extern void fencrypt(FILE* input, FILE* output, keyType key, unsigned long size, const char* IV, unsigned long IVsize);
 
 /* Decrypt `input` file stream using `key` as the key, where `size` is the length of the encrypted message (with HMAC), outputting to `output` file stream, while discarding the first `IVsize` bytes.
  * Returns 1 if the message is valid
  */
-extern int fdecrypt(FILE* input, FILE* output, const keyType* key, unsigned long size, unsigned long IVsize);
+extern int fdecrypt(FILE* input, FILE* output, keyType key, unsigned long size, unsigned long IVsize);
 
 /* Encrypt `input` char buffer using `key` as the key, where `size` is the length of the plaintext char buffer, outputting to `output` char buffer.
  * A HMAC is appended to the end, with size = sizeof(keyType)
  * It is strongly encouraged to use an initialization vector of truly-random bytes, which will be prepended to the encrypted message.
  */
-extern void sencrypt(const char* input, char* output, const keyType* key, unsigned long size, const char* IV, unsigned long IVsize);
+extern void sencrypt(const char* input, char* output, keyType key, unsigned long size, const char* IV, unsigned long IVsize);
 
 /* Decrypt `input` char buffer using `key` as the key, where `size` is the length of the encrypted message (with HMAC), outputting to `output` char buffer, while discarding the first `IVsize` bytes.
  * Returns 1 if the message is valid
  */
-extern int sdecrypt(const char* input, char* output, const keyType* key, unsigned long size, unsigned long IVsize);
+extern int sdecrypt(const char* input, char* output, keyType key, unsigned long size, unsigned long IVsize);
 
 #endif

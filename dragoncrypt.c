@@ -63,9 +63,9 @@ const int dragoncryptKeySize = sizeof(keyType);
 
 */
 
-void fencrypt(FILE* input, FILE* output, const keyType* key, unsigned long size, const char* IV, unsigned long IVsize)
+void fencrypt(FILE* input, FILE* output, keyType key, unsigned long size, const char* IV, unsigned long IVsize)
 {
-	head(*key); // Init variables
+	head(key); // Init variables
 	// thisByte/outByte are both used when dealing with file encryption/decryption
 	int thisByte;
 	char outByte;
@@ -88,11 +88,11 @@ void fencrypt(FILE* input, FILE* output, const keyType* key, unsigned long size,
 	fwrite((void*)&hmac, sizeof(keyType), 1, output); // Append the HMAC to the output
 }
 
-int fdecrypt(FILE* input, FILE* output, const keyType* key, unsigned long size, unsigned long IVsize)
+int fdecrypt(FILE* input, FILE* output, keyType key, unsigned long size, unsigned long IVsize)
 {
 	if (size < sizeof(keyType)) return 0;
 	keyType givenHMAC; // Declaring this so we can compare the embedded HMAC with the one we calculated
-	head(*key); // Init vars
+	head(key); // Init vars
 	// thisByte/outByte are both used when dealing with file encryption/decryption
 	int thisByte;
 	char outByte;
@@ -106,7 +106,7 @@ int fdecrypt(FILE* input, FILE* output, const keyType* key, unsigned long size, 
 	}
 
 	i = 0;
-	while (i++ < size-sizeof(keyType) && (thisByte = fgetc(input)) != EOF) // Increase iterator; if we're still in range, read a character
+	while (i++ < size-sizeof(keyType)-IVsize && (thisByte = fgetc(input)) != EOF) // Increase iterator; if we're still in range, read a character
 	{
 		decrypt(thisByte, outByte, hmac);
 		fputc(outByte, output);
@@ -117,10 +117,10 @@ int fdecrypt(FILE* input, FILE* output, const keyType* key, unsigned long size, 
 
 }
 
-void sencrypt(const char* input, char* output, const keyType* key, unsigned long size, const char* IV, unsigned long IVsize)
+void sencrypt(const char* input, char* output, keyType key, unsigned long size, const char* IV, unsigned long IVsize)
 {
 
-	head(*key); // Init vars
+	head(key); // Init vars
 	unsigned long i;
 
 	for (i = 0; i < IVsize; i++)
@@ -137,11 +137,11 @@ void sencrypt(const char* input, char* output, const keyType* key, unsigned long
 	
 }
 
-int sdecrypt(const char* input, char* output, const keyType* key, unsigned long size, unsigned long IVsize)
+int sdecrypt(const char* input, char* output, keyType key, unsigned long size, unsigned long IVsize)
 {
 	if (size < sizeof(keyType)) return 0;
 
-	head(*key);
+	head(key);
 	keyType givenHMAC;
 	unsigned long i;
 	char unusedByte;
@@ -151,12 +151,13 @@ int sdecrypt(const char* input, char* output, const keyType* key, unsigned long 
 		decrypt(input[i], unusedByte, hmac);
 	}
 
-	for (i = 0; i < size-sizeof(keyType); i++)
+	for (i = 0; i < size-sizeof(keyType)-IVsize; i++)
 	{
 		decrypt(input[i+IVsize], output[i], hmac);
 	}
 	tail();
-	givenHMAC = *( (keyType*)( input + IVsize + size - sizeof(keyType) ) ); // This fetches the HMAC from the input buffer and into givenHMAC
+	givenHMAC = *( (keyType*)( input + size - sizeof(keyType) ) ); // This fetches the HMAC from the input buffer and into givenHMAC
 	return givenHMAC == hmac;
 
 }
+
