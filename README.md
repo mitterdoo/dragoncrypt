@@ -6,3 +6,6 @@ A unique feature about this stream cipher, is that the stream being XOR'd with t
 Below are diagrams detailing the basic structure of the algorithm
 ![Encryption Diagram](http://mitterdoo.net/u/2019-05/31024f12-460c-466b-97a5-a4bff8c8bdcb.png)
 ![Decryption Diagram](http://mitterdoo.net/u/2019-05/52d16498-3142-4919-b75a-b912876b0562.png)
+
+# UNIVERSITY OF OREGON DISCLAIMER
+This code has been in progress for a few months, and was *not* written with the intent of usage in assignments for my classes at the University of Oregon. Therefore, it is not my responsibility if students in my classes use this. 
