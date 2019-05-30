@@ -22,6 +22,7 @@ extern const int dragoncryptKeySize; // size of keyType in bytes. defined in sou
 /* Encrypt `input` file stream using `key` as the key, outputting to `output` file stream.
  * A HMAC is appended to the end, with size = sizeof(keyType)
  * It is strongly encouraged to use an initialization vector of truly-random bytes, which will be prepended to the encrypted message.
+ * For 32-bit encryption, at least 3 IV bytes should be used. For 64-bit, at least 7 bytes should be used.
  */
 extern void fencrypt(FILE* input, FILE* output, keyType key, unsigned long size, const char* IV, unsigned long IVsize);
 
@@ -33,6 +34,7 @@ extern int fdecrypt(FILE* input, FILE* output, keyType key, unsigned long size, 
 /* Encrypt `input` char buffer using `key` as the key, where `size` is the length of the plaintext char buffer, outputting to `output` char buffer.
  * A HMAC is appended to the end, with size = sizeof(keyType)
  * It is strongly encouraged to use an initialization vector of truly-random bytes, which will be prepended to the encrypted message.
+ * For 32-bit encryption, at least 3 IV bytes should be used. For 64-bit, at least 7 bytes should be used.
  */
 extern void sencrypt(const char* input, char* output, keyType key, unsigned long size, const char* IV, unsigned long IVsize);
 
