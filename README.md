@@ -1,2 +1,2 @@
 # dragoncrypt
-A lightweight stream cipher with HMAC authentication
+A lightweight stream cipher with HMAC validity checking
