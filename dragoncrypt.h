@@ -1,6 +1,6 @@
 /*
 	dragoncrypt.h
-	Lightweight stream cipher with HMAC authentication.
+	Lightweight stream cipher with HMAC validity checking.
 
 	Author: Connor "mitterdoo" Ashcroft
  */

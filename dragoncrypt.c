@@ -1,6 +1,6 @@
 /*
 	dragoncrypt.c
-	Lightweight stream cipher with HMAC authentication.
+	Lightweight stream cipher with HMAC validity checking.
 
 	Author: Connor "mitterdoo" Ashcroft
  */
@@ -113,7 +113,7 @@ int fdecrypt(FILE* input, FILE* output, keyType key, unsigned long size, unsigne
 	}
 	tail(); // Finalizes HMAC
 	fread((void*)&givenHMAC, sizeof(keyType), 1, input); // Reads the HMAC from the message
-	return givenHMAC == hmac; // Authenticate HMAC.
+	return givenHMAC == hmac; // Check validity of HMAC.
 
 }
 
