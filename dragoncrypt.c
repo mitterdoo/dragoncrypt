@@ -22,7 +22,6 @@ const int dragoncryptKeySize = sizeof(keyType);
 
 // takes thisByte, lshifts by a random amount, and then xors with HMAC.
 // after that, HMAC is shuffled with xorshift
-// #define calcHash(thisByte, hmac) hmac ^= (keyType)( ( keyType )( thisByte&0xFF ) << ( r_seed % ( sizeof(keyType)*8-8 ) )); shuffle(hmac)
 #define calcHash(thisByte, hmac, counter) hmac ^= (keyType)( ( keyType )( thisByte&0xFF ) << ( counter = (counter+sizeof(char)) % ( sizeof(keyType)*8-sizeof(char)) )); shuffle(hmac)
 
 /* Encrypts a single byte, and adjusts the HMAC accordingly
@@ -38,7 +37,7 @@ const int dragoncryptKeySize = sizeof(keyType);
 #define decrypt(byte_in, byte_out, hmac) \
 	shuffle(r_seed); /* Perform XORSHIFT on the PRNG seed */\
 	byte_out = (byte_in & 0xFF) ^ (r_seed & 0xFF); /* XOR's the byte with the first 8 bits of the PRNG seed */\
-	calcHash(byte_out, hmac, counter); /* Calculates the HMAC of the plaintext byte */\
+	calcHash(byte_in & 0xFF, hmac, counter); /* Calculates the HMAC of the plaintext byte */\
 	r_seed ^= hmac /* Mix the current HMAC with the seed, making the seed change with the data */
 
 /* Initializes common variables used when encrypting/decrypting
