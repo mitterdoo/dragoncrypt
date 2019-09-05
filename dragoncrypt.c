@@ -8,11 +8,11 @@
 #include "dragoncrypt.h"
 
 #ifndef DRGC_32BIT
-	#define shuffle(what) {what ^= what << 13; what ^= what >> 7; what ^= what << 17;} // simple 64-bit xorshift
+	#define shuffle(what) what ^= what << 13; what ^= what >> 7; what ^= what << 17 // simple 64-bit xorshift
 	#define IPAD 0x4613A6F6B45951C6ull
 	#define OPAD 0x29E8FF4949B2863Dull
 #else
-	#define shuffle(what) {what ^= what << 13; what ^= what >> 17; what ^= what << 5;} // simple 32-bit xorshift
+	#define shuffle(what) what ^= what << 13; what ^= what >> 17; what ^= what << 5 // simple 32-bit xorshift
 	#define IPAD 0xB45951C6ul
 	#define OPAD 0x49B2863Dul
 #endif
@@ -49,7 +49,7 @@ const int dragoncryptKeySize = sizeof(keyType);
 	keyType hmac = ipad; \
 	int counter = 0; /* This specifies the number of bits to lshift the hash byte by. Increments by 1 and rolls over after sizeof(keyType)*8-8 */ \
 	shuffle(hmac); \
-	r_seed = key
+	r_seed = ( key > 1 ? key : 1)
 
 /* Finalizes the HMAC
  */
