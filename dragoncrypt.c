@@ -18,6 +18,7 @@
 #endif
 
 static keyType r_seed = 1;  // never initialize to zero
+static char r_seed_char = 1;
 const int dragoncryptKeySize = sizeof(keyType);
 
 // takes thisByte, lshifts by a random amount, and then xors with HMAC.
@@ -28,17 +29,17 @@ const int dragoncryptKeySize = sizeof(keyType);
  */
 #define encrypt(byte_in, byte_out, hmac) \
 	shuffle(r_seed); /* Perform XORSHIFT on the PRNG seed */\
-	byte_out = (byte_in & 0xFF) ^ (r_seed & 0xFF); /* XOR's the byte with the first 8 bits of the PRNG seed */\
+	byte_out = byte_in ^ r_seed ^ r_seed_char; /* XOR's the byte with the first 8 bits of the PRNG seed */\
 	calcHash(byte_in, hmac, counter); /* Calculates the HMAC of the plaintext byte */\
-	r_seed ^= hmac /* Mix the current HMAC with the seed, making the seed change with the data */
+	r_seed_char += byte_in*7 /* Mix the output byte with the smaller RNG seed to make the seed change with data*/\
 
 /* Decrypts a single byte, adjusting the HMAC accordingly
  */
 #define decrypt(byte_in, byte_out, hmac) \
 	shuffle(r_seed); /* Perform XORSHIFT on the PRNG seed */\
-	byte_out = (byte_in & 0xFF) ^ (r_seed & 0xFF); /* XOR's the byte with the first 8 bits of the PRNG seed */\
-	calcHash(byte_in & 0xFF, hmac, counter); /* Calculates the HMAC of the plaintext byte */\
-	r_seed ^= hmac /* Mix the current HMAC with the seed, making the seed change with the data */
+	byte_out = byte_in ^ r_seed ^ r_seed_char; /* XOR's the byte with the first 8 bits of the PRNG seed */\
+	calcHash(byte_out, hmac, counter); /* Calculates the HMAC of the plaintext byte */\
+	r_seed_char += byte_out*7 /* Mix the output byte with the smaller RNG seed to make the seed change with data*/\
 
 /* Initializes common variables used when encrypting/decrypting
  */
@@ -48,7 +49,8 @@ const int dragoncryptKeySize = sizeof(keyType);
 	keyType hmac = ipad; \
 	int counter = 0; /* This specifies the number of bits to lshift the hash byte by. Increments by 1 and rolls over after sizeof(keyType)*8-8 */ \
 	shuffle(hmac); \
-	r_seed = ( key > 1 ? key : 1)
+	r_seed = ( key > 1 ? key : 1); \
+	r_seed_char = (char)r_seed
 
 /* Finalizes the HMAC
  */
